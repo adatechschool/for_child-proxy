@@ -4,7 +4,6 @@
 import socket, sys
 from thread import *
 
-
 try:
     listening_port = int(raw_input("[*] Enter Listening Port Number: "))
 except KeyboardInterrupt:
@@ -14,7 +13,6 @@ except KeyboardInterrupt:
 
 max_conn = 5 #maximum de connexion possible
 buffer_size = 8192 # Max Socket Buffer Size
-
 
 def start():
     try:
@@ -101,5 +99,3 @@ def proxy_server(webserver, port, conn, data, addr):
         sys.exit(1)
 
 start()
-
-

@@ -24,10 +24,10 @@ def start():
         s.listen(max_conn) #Listening forIncoming Connections
         print("[*]Initialisation de la  Sockets .....Fait")
         print( "[*] Vous avez bien liée la sockets bravo...")
-	print("[*]Le Serveur à commencé l'écoute.... [ %d ]\n" % (listening_port))
-    except Exception, e:
-    #execute this Block If Socket Anything Fails
-        print("[*] Impossible d'initialiser la  Socket")
+        print("[*]Le Serveur à commencé l'écoute.... [ %d ]\n" % (listening_port))
+    except Exception as e:
+        #execute this Block If Socket Anything Fails
+        print("[*] Impossible d'initialiser la Socket")
         sys.exit(2)
 
     while 1:
@@ -39,7 +39,7 @@ def start():
             #Execute this Block if client sicked Failed
             #s.close()
             print("\n[*] Vous avez forcer l'arret de la connexion du Proxy....")
-	    print("[*] Passez une bonne journée!!")
+            print("[*] Passez une bonne journée!!")
             sys.exit(1)
     s.close()
 
@@ -71,7 +71,7 @@ def conn_string(conn, data, addr):
             webserver = temp[:port_pos]
 
         proxy_server(webserver, port, conn, addr, data)
-    except Exception, e:
+    except Exception as e:
         pass
 
 def proxy_server(webserver, port, conn, data, addr):

@@ -43,37 +43,90 @@ def start():
             sys.exit(1)
     s.close()
 
-def conn_string(conn, data, addr):
+#def conn_string(conn, data, addr):
 # Client Browser Request Appears Here
-    try:
-        first_line = data.split('\n')[0]
+ #   try:
+  #      first_line = data.split('\n')[0]
 
-        url = first_line.split(' ')[1]
+   #     url = first_line.split(' ')[1]
 
-        http_pos = url.find("://") #find the position of ://
-        if (http_pos==-1):
-            temp = url
+    #    http_pos = url.find("://") #find the position of ://
+     #   if (http_pos==-1):
+      #      temp = url
+       # else:
+
+        #    temp = url[(http_pos+3):] #get the rest of the url
+        #port_pos = temp.find(":") #find the Pos of the port (if any)
+
+        #webserver_pos = temp.find("/")  #Find the end of the server
+       # if  webserver_pos == -1:
+        #    webserver_pos = len(temp)
+        #webserver = ""
+       # port = -1
+        #if (port_pos==-1 or webserver_pos < port_pos):   
+         #  port = 80        
+          # webserver = temp[:webserver_pos]
+        #else:
+         #   port = int((temp[(port_pos+1):])[:webserver_pos-port_pos-1])
+          #  webserver = temp[:port_pos]
+
+        #proxy_server(webserver, port, conn, addr, data)
+    #except Exception as e:
+     #   pass
+http_pos = url.find("://") # find pos of ://
+if (http_pos==-1):
+    temp = url
+else:
+    temp = url[(http_pos+3):] # get the rest of url
+
+port_pos = temp.find(":") # find the port pos (if any)
+
+# find end of web server
+webserver_pos = temp.find("/")
+if webserver_pos == -1:
+    webserver_pos = len(temp)
+
+webserver = ""
+port = -1
+if (port_pos==-1 or webserver_pos < port_pos): 
+
+    # default port 
+    port = 80 
+    webserver = temp[:webserver_pos] 
+
+else: # specific port 
+    port = int((temp[(port_pos+1):])[:webserver_pos-port_pos-1])
+    webserver = temp[:port_pos]  
+
+def handle_client_connection(client_socket):
+    raw_request = client_socket.recv(1024)
+    request = HTTPRequest(raw_request)
+    if request.error_code:
+        print(f'Error : {request.error_code} : {request.error_message}')
+    else:
+        print(f'Received {request.command} {request.path}')
+        try:
+            response = requests.get(request.path)
+            response.raise_for_status()
+        except HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+        except Exception as err:
+            print(f'Other error occurred: {err}')
         else:
+            print(response.text)
 
-            temp = url[(http_pos+3):] #get the rest of the url
-        port_pos = temp.find(":") #find the Pos of the port (if any)
+    client_socket.close()
 
-        webserver_pos = temp.find("/")  #Find the end of the server
-        if  webserver_pos == -1:
-            webserver_pos = len(temp)
-        webserver = ""
-        port = -1
-        if (port_pos==-1 or webserver_pos < port_pos):   
-           port = 80        
-           webserver = temp[:webserver_pos]
-        else:
-            port = int((temp[(port_pos+1):])[:webserver_pos-port_pos-1])
-            webserver = temp[:port_pos]
+class HTTPRequest(BaseHTTPRequestHandler):
+    def __init__(self, request_text):
+        self.rfile = BytesIO(request_text)
+        self.raw_requestline = self.rfile.readline()
+        self.error_code = self.error_message = None
+        self.parse_request()
 
-        proxy_server(webserver, port, conn, addr, data)
-    except Exception as e:
-        pass
-
+    def send_error(self, code, message):
+        self.error_code = code
+        self.error_message = message
 def proxy_server(webserver, port, conn, data, addr):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -90,12 +143,12 @@ def proxy_server(webserver, port, conn, data, addr):
                 dar = "%.3s" % (str(dar))
                 dar = "%s KB" % (dar)
                 "Print A custom Message For Request Complete"
-                print "[*] Request Done: %s => %s <=" % (str(addr[0]),str(dar))
+#                print "[*] Request Done: %s => %s <=" % (str(addr[0]),str(dar))
             else:
                break
         s.close()
         conn.close()
-    except socket.error, (value, message):
+    except socket.error as (value, message):
         s.close()
         conn.close()
         sys.exit(1)

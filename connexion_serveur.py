@@ -77,8 +77,7 @@ def proxy_server(webserver, port, conn, data, addr):
             reply = s.recv(buffer_size)#espace mémoire assigné pour les infos
             if (len(reply) > 0): 
                 conn.send(reply)
-                dar = float(len(reply))
-                dar = float(dar / 1024)#espace memoire
+                dar = float(len(reply)/1024)
                 dar = "%.3s" % (str(dar))#temps de rep
                 dar = "%s KB" % (dar)#vitesse 
                 "Print A custom Message For Request Complete"

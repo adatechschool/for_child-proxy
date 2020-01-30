@@ -99,5 +99,3 @@ def proxy_server(webserver, port, conn, data, addr):
         sys.exit(1)
 
 start()
-
-

@@ -76,26 +76,28 @@ def proxy_server(webserver, port, conn, data, addr):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((host, port))
-        s.send(data)
+        s.send(data)#connexion
 
         while 1:
-            reply = s.recv(buffer_size)
+            reply = s.recv(buffer_size)#espace mémoire assigné pour les infos
            
-            if (len(reply) > 0):
+            if (len(reply) > 0): 
                 conn.send(reply)
                 dar = float(len(reply))
-                dar = float(dar / 1024)
-                dar = "%.3s" % (str(dar))
-                dar = "%s KB" % (dar)
+                dar = float(dar / 1024)#espace memoire
+                dar = "%.3s" % (str(dar))#temps de rep
+                dar = "%s KB" % (dar)#vitesse 
                 "Print A custom Message For Request Complete"
-                print "[*] Request Done: %s => %s <=" % (str(addr[0]),str(dar))
+                print ("[*] Request Done: {} => {} <=".format((str(addr[0]),str(dar))))
             else:
                break
         s.close()
         conn.close()
-    except socket.error, (value, message):
+    except socket.error (value, message):
         s.close()
         conn.close()
         sys.exit(1)
 
 start()
+
+

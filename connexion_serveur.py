@@ -4,6 +4,7 @@
 import socket, sys
 from threading import *
 
+# choix port + quitter serveur
 try:
     listening_port = int(input("[*] Enter Listening Port Number: "))
 except KeyboardInterrupt:
@@ -16,47 +17,47 @@ buffer_size = 8192 # Max Socket Buffer Size
 
 def start():
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #creation de la socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creation de la socket
        # s.bind(('', 21602)) 
-        s.bind(('',listening_port)) # Bind Socket For Listen
-        s.listen(max_conn) #Listening forIncoming Connections
+        s.bind(('',listening_port)) # lier la socket pour listen
+        s.listen(max_conn) # écoute des connexions entrantes
         print("[*]Initialisation de la  Sockets .....Fait")
         print( "[*] Vous avez bien liée la sockets bravo...")
         print("[*]Le Serveur à commencé l'écoute.... [ %d ]\n" % (listening_port))
     except Exception as e:
-        #execute this Block If Socket Anything Fails
+        # execute le block si la socket échoue
         print("[*] Impossible d'initialiser la Socket")
         sys.exit(2)
 
     while 1:
         try:
-            conn, addr = s.accept() #accept Connecction from Client Browser
-            data = conn.recv(buffer_size) # Receive Client Data
-            threading.Thread(conn_string, (conn,data, addr)) #strat A Thread
+            conn, addr = s.accept() # accepter la connexion à partir du navigateur client
+            data = conn.recv(buffer_size) # reçois les données clients
+            threading.Thread(conn_string, (conn,data, addr)) # démarrer le Thread
         except KeyboardInterrupt:
-            #Execute this Block if client sicked Failed
-            #s.close()
+            # exécuter ce bloc en cas d'échec du client
+            # s.close()
             print("\n[*] Vous avez forcer l'arret de la connexion du Proxy....")
             print("[*] Passez une bonne journée!!")
             sys.exit(1)
     s.close()
 
 def conn_string(conn, data, addr):
-# Client Browser Request Appears Here
+# la demande du navigateur client apparaît ici
     try:
         first_line = data.split('\n')[0]
 
         url = first_line.split(' ')[1]
 
-        http_pos = url.find("://") #find the position of ://
+        http_pos = url.find("://") # trouve la position du ://
         if (http_pos==-1):
             temp = url
         else:
 
-            temp = url[(http_pos+3):] #get the rest of the url
-        port_pos = temp.find(":") #find the Pos of the port (if any)
+            temp = url[(http_pos+3):] # récupère la fin de l'url
+        port_pos = temp.find(":") # trouve le Pos du port (le cas échéant)
 
-        webserver_pos = temp.find("/")  #Find the end of the server
+        webserver_pos = temp.find("/")  # trouve la fin du serveur
         if  webserver_pos == -1:
             webserver_pos = len(temp)
         webserver = ""
@@ -71,15 +72,15 @@ def conn_string(conn, data, addr):
         proxy_server(webserver, port, conn, addr, data)
     except Exception as e:
         pass
-http_pos = url.find("://") # find pos of ://
+http_pos = url.find("://") # trouver le pos de ://
 if (http_pos==-1):
     temp = url
 else:
-    temp = url[(http_pos+3):] # get the rest of url
+    temp = url[(http_pos+3):] # obtient le reste de l'url
 
-port_pos = temp.find(":") # find the port pos (if any)
+port_pos = temp.find(":") # trouve le port pos (le cas échéant)
 
-# find end of web server
+# trouver la fin url serveur
 webserver_pos = temp.find("/")
 if webserver_pos == -1:
     webserver_pos = len(temp)
@@ -88,11 +89,11 @@ webserver = ""
 port = -1
 if (port_pos==-1 or webserver_pos < port_pos): 
 
-    # default port 
+    # port par défaut
     port = 80 
     webserver = temp[:webserver_pos] 
 
-else: # specific port 
+else: # port spécifique
     port = int((temp[(port_pos+1):])[:webserver_pos-port_pos-1])
     webserver = temp[:port_pos]  
 
@@ -144,7 +145,7 @@ def proxy_server(webserver, port, conn, data, addr):
                break
         s.close()
         conn.close()
-    except socket.error as (value, message):
+    except socket.error (value, message):
         s.close()
         conn.close()
         sys.exit(1)

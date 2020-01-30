@@ -45,17 +45,13 @@ def conn_string(conn, data, addr):
 # Client Browser Request Appears Here
     try:
         first_line = data.split('\n')[0]
-
         url = first_line.split(' ')[1]
-
         http_pos = url.find("://") #find the position of ://
         if (http_pos==-1):
             temp = url
         else:
-
             temp = url[(http_pos+3):] #get the rest of the url
         port_pos = temp.find(":") #find the Pos of the port (if any)
-
         webserver_pos = temp.find("/")  #Find the end of the server
         if  webserver_pos == -1:
             webserver_pos = len(temp)
@@ -77,10 +73,8 @@ def proxy_server(webserver, port, conn, data, addr):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((host, port))
         s.send(data)#connexion
-
         while 1:
             reply = s.recv(buffer_size)#espace mémoire assigné pour les infos
-           
             if (len(reply) > 0): 
                 conn.send(reply)
                 dar = float(len(reply))
@@ -97,5 +91,4 @@ def proxy_server(webserver, port, conn, data, addr):
         s.close()
         conn.close()
         sys.exit(1)
-
 start()

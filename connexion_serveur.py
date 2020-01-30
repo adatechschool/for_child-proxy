@@ -2,10 +2,10 @@
 # coding: utf-8
 
 import socket, sys
-from thread import *
+from threading import *
 
 try:
-    listening_port = int(raw_input("[*] Enter Listening Port Number: "))
+    listening_port = int(input("[*] Enter Listening Port Number: "))
 except KeyboardInterrupt:
     print ("\n[*] l'utilisateur demande l'arret du serveur")
     print ("\n[*]Vous avez quitter le serveur.....")
@@ -32,7 +32,7 @@ def start():
         try:
             conn, addr = s.accept() #accept Connecction from Client Browser
             data = conn.recv(buffer_size) # Receive Client Data
-            start_new_thread(conn_string, (conn,data, addr)) #strat A Thread
+            threading.Thread(conn_string, (conn,data, addr)) #strat A Thread
         except KeyboardInterrupt:
             #Execute this Block if client sicked Failed
             #s.close()
